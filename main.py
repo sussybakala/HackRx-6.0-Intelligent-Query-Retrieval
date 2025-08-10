@@ -63,7 +63,7 @@ async def lifespan(app: FastAPI):
     # Create a pool of LLM instances for better concurrency
     for _ in range(3):  # Adjust based on your needs
         llm = ChatGoogleGenerativeAI(
-            api_key="AIzaSyAKPDCUeTbalrTrFuSYh0Ae1g-fr0Szy88",
+            api_key="<>",
             model="gemini-2.0-flash",
             max_tokens=8000
         )
